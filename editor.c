@@ -30,7 +30,7 @@ char* filepath = NULL;
 int cursor_pos = 0;
 int cursor_line = 0;
 int scroll = 0;
-bool dirty = true;
+bool dirty = false;
 int num_lines = 0;
 
 char line_num_format[16];
@@ -171,7 +171,7 @@ static int GetWrappedHeightOfLine(struct line* l) {
 }
 
 static void Init(void) {
-    dirty = true;
+    dirty = false;
     scroll = 0;
     scroll = 0;
     cursor_line = 0;
@@ -595,6 +595,8 @@ int main(int argc, char** argv) {
      */
     ToggleLineNumbers();
 
+    dirty = false;
+
     bool needs_update = true;
     while (true) {
         if (needs_update) {
@@ -676,9 +678,11 @@ int main(int argc, char** argv) {
                 if (cursor_line != 0) {
                     cursor_pos = GetLine(cursor_line - 1)->len;
                     MergeLineWithPrevious(cursor_line--);
+                    dirty = true;         
                 }
             } else {
                 RemoveCharacterFromLine(GetLine(cursor_line), --cursor_pos);
+                dirty = true;
             }
         
         } else if (c == '\n') {
